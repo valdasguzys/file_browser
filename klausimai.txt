@@ -1,0 +1,2 @@
+1. ar failu browseryje uzejus i kita kataloga tame kataloge turi buti index.php su analogiska scandir() funkcija. 
+2. pasitikslinti del html valdymo index.php
