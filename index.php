@@ -7,59 +7,61 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- TODO -->
+<!-- mygtukas katalogams trinti -->
+<!-- nuresetint paskutinio sukurto katalogo kintamuosius -->
+<!-- neteisingai rodo direktorija kurioje esame -->
+<!-- back mygtukas -->
+<!-- autentifikacija login passw -->
+
+
+<form action="" method="GET">
+<label for="new_folder">Create New Folder</label><br>
+<input type="text" id="mass" name="new_folder" value="New Folder"><br>
+<input type="submit" value="Submit" name="submit">
+</form>
 
 <?php 
-
-//katalogo adresas
-$my_folder = "./";
-//nuskanuojamas katalogo turinys
-$scan = scandir($my_folder);
-
-//----------------------------------
-// $folder_array = array();
-// $file_array = array();
-
-// foreach ($scan as $folder) { 
-//     if (is_dir($folder)) { 
-//     array_push($folder_array, $folder);
-//     } else {
-//     array_push($file_array, $folder);
-//     }
-// } 
-
-// for ($i = 0; $i <= count($scan) - 1; $i++ ) {
-//     print("<td>" . $scan[$i] . "</td>");
-// }
-//----------------------------------------
-
-
+$new_folder = $_GET['new_folder'];
+if (is_dir($new_folder)) {
+        print('Folder ' . $new_folder . ' already exists!');
+    } else {
+        $create_folder = mkdir($new_folder);
+        print('Folder ' . $new_folder . ' was succesfuly created!');
+    }
 ?>
 
-<!-- adresas kuriame randames -->
+
+<?php 
+    $path = './' . $_GET['path']; 
+    $scan = scandir($path);                      
+?>
+
 <h3>
     <?php 
-    print($my_folder . " katalogo turinys");
+    print($_SERVER['REQUEST_URI'] . " katalogo turinys");
     ?>
 </h3>
 
-<!-- sukuriu lentele atvaizduoti katalogo turini -->
 <table>
     <tr>
     <th>Name</th>
     <th>Type</th>
-    <?php 
-        for ($i = 0; $i <= count($scan) - 1; $i++ ) {
-            if (is_dir($scan[$i])) {
-                print("<tr><td><a href='$scan[$i]'>" . $scan[$i] . "</a></td>" . "<td>Folder</td></tr>");
-            } else {
-                print("<tr><td><a href='$scan[$i]'>" . $scan[$i] . "</a></td>" . "<td>File</td></tr>");
-                }
-        }    
-    ?>
+    <th>Action</th>
+
+        <?php 
+            for ($i = 0; $i <= count($scan) - 1; $i++ ) {
+                if (is_dir($scan[$i])) {
+                    print('<tr><td><a href="' . $_SERVER['REQUEST_URI'] . '?path=' . $scan[$i] . '/' . '">' . $scan[$i] . '</a></td><td>Folder</td><td></td></tr>');
+                } else {
+                    print('<tr><td>
+                    <a href="' . $_SERVER['REQUEST_URI'] . $scan[$i] . '">' . $scan[$i] . '</a></td><td>File</td><td><button>delete</button></td></tr>');
+                    }
+            }                 
+        ?>
+        
     </tr>
 </table>
 
-
-    
 </body>
 </html>
