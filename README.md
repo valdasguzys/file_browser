@@ -9,5 +9,5 @@ Simple file browser with basic functionality:
 <li>Ability to delete files with some protection (php, css, and git files)</li>
 <li>Ability to download and upload image files </li>
 
-
+To install just copy file_browser folder to your localhost www.
 
