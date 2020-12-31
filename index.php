@@ -1,7 +1,7 @@
 
 <!-- to do -->
 <!-- readme.md -->
-<!-- pastiliuoti -->
+<!-- styles -->
 
 
 <?php
@@ -10,7 +10,7 @@ if(!isset($_COOKIE['times_visited']))
     $times_visited = 1;
 else
     $times_visited = $_COOKIE['times_visited'] + 1;
-setcookie('times_visited', $times_visited, time()+8640); //// 86400 = 1 day
+    setcookie('times_visited', $times_visited, time()+86400); //// 86400 = 1 day
 
 // FILE DOWNLOAD LOGIC
 if(isset($_POST['download'])){
@@ -49,7 +49,7 @@ if(isset($_FILES['image'])){
     }
     if(empty($errors)==true) {
         move_uploaded_file($file_tmp,"./".$file_name);
-        echo "Success";
+        $message = ('Image ' . $file_name . ' uploaded');
     }else{
         print_r($errors);
     }
@@ -62,7 +62,7 @@ $scan = scandir($path);
 //  PRINTS CURRENT FOLDER
 function display_current_dir($current_folder) { 
     // $current_folder = str_replace('?path=', '' ,$_SERVER['REQUEST_URI']);
-    $current_folder = str_replace(array('?path=', '%20'), array('', ' ') ,$_SERVER['REQUEST_URI']);  
+    $current_folder = str_replace(array('?path=', '%20', 'index.php'), array('', ' ', '') ,$_SERVER['REQUEST_URI']);  
     print('<h3>' . $current_folder . ' folder contents' . '</h3>');
 }
 
@@ -89,15 +89,15 @@ print('<table>
             print('<tr><td>
             <a href="' . $_SERVER['REQUEST_URI'] . $scan[$i] . '">' . $scan[$i] . '</a></td>
             <td>File</td>
-            <td>
+            <td><div class="action_buttons">
             <form action="index.php" method="POST">
-            <input type="hidden" name="delete" value="' . $scan[$i] . '">
-            <button type="submit">Delete</button>
+                <input type="hidden" name="delete" value="' . $scan[$i] . '">
+                <button class="del_btn" type="submit">Delete</button>
             </form>
             <form action="index.php" method="POST">
-            <input type="hidden" name="download" value="' . $scan[$i] . '">
-            <button type="submit">Download</button>
-            </form>
+                <input type="hidden" name="download" value="' . $scan[$i] . '">
+                <button class="downl_btn" type="submit">Download</button>
+            </form></div>
             </td>
             </tr>');
         }
@@ -109,12 +109,12 @@ print('<table>
 if (isset($_POST['new_folder'])) {
     $new_folder = $_POST['new_folder'];
         if (is_dir($new_folder)) {
-            print('Folder ' . $new_folder . ' already exists!');
+            $message = ('Folder ' . $new_folder . ' already exists!');
         } else if ($new_folder == "") {
-            print('Enter name for new folder.');
+            $message = ('Enter name for new folder.');
         } else {    
             mkdir($new_folder);
-            print('Folder ' . $new_folder . ' was succesfuly created!');
+            $message = ('Folder ' . $new_folder . ' was succesfuly created!');
     }
 }
 
@@ -129,7 +129,7 @@ if (isset($_POST['new_folder'])) {
 
 function back_button($url_back_2) {
     $url_back_2 = dirname($_SERVER['REQUEST_URI']);
-    print("<button><a href='$url_back_2'>BACK2</a></button>");
+    print("<div class=\"back_button\"><button><a href='$url_back_2'>GO BACK</a></button></div>");
 }
 
 // FILE DELETION
@@ -141,10 +141,10 @@ function back_button($url_back_2) {
         $extensions = array("php","css","gitattributes","gitignore","gitkeep");
         if(in_array($file_ext,$extensions) === true){
         
-            print('Cannot delete ' . $delete_file . ' file!'); 
+            $message = ('Cannot delete ' . $delete_file . ' file!'); 
             } else {
                 unlink($delete_file);
-                print('File ' . $delete_file . ' succesfuly deleted!');
+                $message = ('File ' . $delete_file . ' succesfuly deleted!');
             }
     }
 // LOGOUT LOGIC
@@ -154,7 +154,6 @@ function back_button($url_back_2) {
         unset($_SESSION['username']);
         unset($_SESSION['password']);
         unset($_SESSION['logged_in']);
-        print('Logged out!');
     }
 ?>
 
@@ -190,48 +189,67 @@ function back_button($url_back_2) {
 
 <!-- LOGGED IN -->
 
-<?php 
-    if($_SESSION['logged_in'] == true){ ?>
-    
-        <!-- new folder form -->
-        <form action="" method="POST">
-            <label for="new_folder">Create New Folder</label><br>
-            <input type="text" id="mass" name="new_folder" value="New Folder"><br>
-            <input type="submit" value="Submit" name="submit">
-        </form>
+<?php
 
-        <!-- file upload -->
-        <form action ="" method = "POST" enctype = "multipart/form-data">
-            <input type = "file" name = "image">
-            <input type = "submit">
-        </form>
-        <ul>
-            <li>Sent file: <?php echo $_FILES['image']['name'];  ?>
-            <li>File size: <?php echo $_FILES['image']['size'];  ?>
-            <li>File type: <?php echo $_FILES['image']['type'] ?>
-        </ul>
-
-
-        <?php
-            back_button($url_back_2);
-            // if (isset($_POST['delete'])) {
-            // print('File ' . $delete_file . ' succesfuly deleted!'); }
-            print('Click here to <a href = "index.php?action=logout"> logout. </a>');               
+    if($_SESSION['logged_in'] == true){    
             display_current_dir($current_folder);
             display_contents($scan);
-            print('You have visited ' . $times_visited . ' times');    
-    } else { 
-        ?>
+            back_button($url_back_2);            
+
+?>
+        <!-- outputs message after an action -->
+        <div class="message"><?php echo $message; ?></div>
+    
+    <div class="wrapper">
+  
+        <!-- new folder form -->
+        <div class="new_folder">
+            <form action="" method="POST">
+                <label for="new_folder">Create New Folder</label><br>
+                <input type="text" name="new_folder" value="Folder name"><br>
+                <button type = "submit">Create</button>
+            </form>
+        </div>
+
+        <!-- image upload form-->
+
+            <div><form action ="" method = "POST" enctype = "multipart/form-data">
+                <input class="chose_file" type = "file" name = "image"><br>
+                <button type = "submit">Upload</button>
+            </form></div>
+            <ul>
+                <li>Sent file: <?php echo $_FILES['image']['name'];  ?>
+                <li>File size: <?php echo $_FILES['image']['size'];  ?>
+                <li>File type: <?php echo $_FILES['image']['type']; ?>
+            </ul>
+
+    </div>
+
+    <!-- logout and cookie counter          -->
+    <div class="footer">
+        <?php  
+        print('<a href = "index.php?action=logout"><button>Click here to logout </button></a>');  
+        print('You have visited ' . $times_visited . ' times'); ?>
+    </div>    
+  
+
+    <?php            
+
+
+        } else { ?>
+
 
         <!-- login form  -->
-        <h2>Enter Username and Password</h2>
+        <h3>Enter Username and Password</h3>
 
-        <form action="index.php" method="post">
-            <h4><?php echo $msg; ?></h4>
-            <input type="text" name="username" placeholder="username = Valdas" required autofocus></br>
-            <input type="password" name="password" placeholder="password = 1234" required>
-            <button type="submit" name="login">Login</button>
-        </form>     
+        <div class="login">
+            <form action="index.php" method="post">
+                <h4><?php echo $msg; ?></h4>
+                <input type="text" name="username" placeholder="username = Valdas" required autofocus></br>
+                <input type="password" name="password" placeholder="password = 1234" required></br>
+                <button type="submit" name="login">Login</button>
+            </form>
+        </div>     
 <?php
 
     }
