@@ -48,7 +48,7 @@ if(isset($_FILES['image'])){
         $errors[]='File size must be exactly 2 MB';
     }
     if(empty($errors)==true) {
-        move_uploaded_file($file_tmp,"./".$file_name);
+        move_uploaded_file($file_tmp, "./" . $_GET['path'] . "/" . $file_name);
         $message = ('Image ' . $file_name . ' uploaded');
     }else{
         print_r($errors);
@@ -90,7 +90,7 @@ print('<table>
             <a href="' . $_SERVER['REQUEST_URI'] . $scan[$i] . '">' . $scan[$i] . '</a></td>
             <td>File</td>
             <td><div class="action_buttons">
-            <form action="index.php" method="POST">
+            <form action="" method="POST">
                 <input type="hidden" name="delete" value="' . $scan[$i] . '">
                 <button class="del_btn" type="submit">Delete</button>
             </form>
@@ -136,8 +136,9 @@ function back_button($url_back_2) {
 //protection to delete .php, .css and git files 
     
     if (isset($_POST['delete'])) {
-        $delete_file = $_POST['delete'];
-        $file_ext = strtolower(end(explode('.',$_POST['delete'])));
+        $delete_file = $_GET['path'] . "/" . $_POST['delete'];
+        // $delete_file = $_POST['delete'];
+        $file_ext = strtolower(end(explode('.', $_POST['delete'])));
         $extensions = array("php","css","gitattributes","gitignore","gitkeep");
         if(in_array($file_ext,$extensions) === true){
         
